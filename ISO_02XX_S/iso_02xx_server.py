@@ -24,8 +24,15 @@ hdlr = logging.FileHandler('myapp.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 hdlr.setFormatter(formatter)
 logger.addHandler(hdlr) 
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.DEBUG)
 
+def entry_log(message):
+    	logger.info(message)
+	return
+
+def exit_log(message):
+    	logger.info(message)
+	return
 
 import socket, subprocess, re
 #Utility subroutines
@@ -39,23 +46,26 @@ def get_ipv4_address():
     patt = re.compile(r'inet\s*\w*\S*:\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
     resp = patt.findall(ifc_resp[0])
     #print resp
+    info = "The ip used is : " + str(resp[0])
+    logger.info(info)
     return resp[0]
     
 
 
 #Validation sub routines
 def validate_BM_1(bitype, bitvalue):	
-	 info = ""
-	 info +=  "The bitype is " + str(bitype) + "The bitvalue : " + str(bitvalue)
-	 print info
+	 entry_log(validate_BM_1.__name__)
+	 info =  "The bitype is " + str(bitype) + "The bitvalue : " + str(bitvalue)
 	 raise InvalidIso8583, "Invalid Bitmap" 
+	 exit_log(validate_BM_1.__name__)
 	 return 
 #PAN
 def validate_BM_2(bitype, bitvalue):
-	info = ""
-	info =  "The bitype is " + str(bitype) + "The bitvalue : " + str(bitvalue)
-	print info 
+	entry_log(validate_BM_2.__name__)
+	info =  "The Account number is" + str(bitvalue)
+    	logger.info(info)
 	if (bitype != '2'):
+    		logger.info("Invalid bitype")
 		raise InvalidIso8583, "Invalid Bitmap_2"
 	#check length 
 	if (len(str(bitvalue)) >  19 or len(str(bitvalue)) == 0 ):
@@ -65,6 +75,7 @@ def validate_BM_2(bitype, bitvalue):
 	for c in str(bitvalue):
 		if (c.isdigit() == False):
 			raise InvalidIso8583, "Invalid Bitmap_2"
+	exit_log(validate_BM_2.__name__)
 	return 
 
 #Processing code
@@ -298,7 +309,7 @@ def validate_BM_42(bitype, bitvalue):
 #Card Acceptor Name and Location
 def validate_BM_43(bitype, bitvalue):
 
-	if (len(str(bitvalue)) != 40):
+	if (len(str(bitvalue)) > 40 or len(str(bitvalue)) == 0):
                 raise InvalidIso8583, "Invalid Bitmap_43"
         # should be alpha-numeric
         for c in str(bitvalue):
@@ -329,11 +340,11 @@ def validate_BM_48(bitype, bitvalue):
 def validate_BM_49(bitype, bitvalue):
 
 	if (len(str(bitvalue)) != 3):
-                raise InvalidIso8583, "Invalid Bitmap_43"
+                raise InvalidIso8583, "Invalid Bitmap_49"
         # should be alpha-numeric
         for c in str(bitvalue):
                 if (c.isalpha() == False):
-                        raise InvalidIso8583, "Invalid Bitmap_43"
+                        raise InvalidIso8583, "Invalid Bitmap_49"
 	return
 def validate_BM_50(bitype, bitvalue):
 	return
@@ -436,19 +447,19 @@ def validate_ISO8583 (bitmap, bitype, bitvalue):
 			validate_BM_43(bitmap, bitvalue)
 			return
 		elif (str(bitmap) == '48'): 
-			validate_BM_43(bitmap, bitvalue)
+			validate_BM_48(bitmap, bitvalue)
 			return
 		elif (str(bitmap) == '49'): 
-			validate_BM_43(bitmap, bitvalue)
+			validate_BM_49(bitmap, bitvalue)
 			return
 		elif (str(bitmap) == '60'): 
-			validate_BM_43(bitmap, bitvalue)
+			validate_BM_60(bitmap, bitvalue)
 			return
 		elif (str(bitmap) == '61'): 
-			validate_BM_43(bitmap, bitvalue)
+			validate_BM_61(bitmap, bitvalue)
 			return
 		elif (str(bitmap) == '62'): 
-			validate_BM_43(bitmap, bitvalue)
+			validate_BM_62(bitmap, bitvalue)
 			return
 	except	InvalidIso8583, exceptionInfo:
         	print exceptionInfo 
