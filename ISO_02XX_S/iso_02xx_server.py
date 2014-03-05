@@ -17,6 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+#Administer logging
+import logging
+logger = logging.getLogger('myapp')
+hdlr = logging.FileHandler('myapp.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr) 
+logger.setLevel(logging.WARNING)
+
+
 import socket, subprocess, re
 #Utility subroutines
 def get_ipv4_address():
@@ -32,18 +42,23 @@ def get_ipv4_address():
     return resp[0]
     
 
+
 #Validation sub routines
 def validate_BM_1(bitype, bitvalue):	
-	 print "The bitype is ", str(bitype), "The bitvalue : " , str(bitvalue)
+	 info = ""
+	 info +=  "The bitype is " + str(bitype) + "The bitvalue : " + str(bitvalue)
+	 print info
 	 raise InvalidIso8583, "Invalid Bitmap" 
 	 return 
 #PAN
 def validate_BM_2(bitype, bitvalue):
-	print "The bitype is ", str(bitype), "The bitvalue : " , str(bitvalue)
-	if (bitype != 2):
+	info = ""
+	info =  "The bitype is " + str(bitype) + "The bitvalue : " + str(bitvalue)
+	print info 
+	if (bitype != '2'):
 		raise InvalidIso8583, "Invalid Bitmap_2"
 	#check length 
-	if (len(str(bitvalue)) != 19):
+	if (len(str(bitvalue)) >  19 or len(str(bitvalue)) == 0 ):
 		raise InvalidIso8583, "Invalid Bitmap_2"
 		 
 	# should be numeric
@@ -369,74 +384,98 @@ def validate_ISO8583 (bitmap, bitype, bitvalue):
 	print "The bitvalue is ", str(bitvalue)
 
 	try:
-		if (str(bitmap) == 2): 
+		if (str(bitmap) == '2'): 
 			validate_BM_2(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 3): 
+		elif (str(bitmap) == '3'): 
 			validate_BM_3(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 4): 
+		elif (str(bitmap) == '4'): 
 			validate_BM_4(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 7): 
+		elif (str(bitmap) == '7'): 
 			validate_BM_7(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 11): 
+		elif (str(bitmap) == '11'): 
 			validate_BM_11(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 12): 
+		elif (str(bitmap) == '12'): 
 			validate_BM_12(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 13): 
+		elif (str(bitmap) == '13'): 
 			validate_BM_13(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 14): 
+		elif (str(bitmap) == '14'): 
 			validate_BM_14(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 18): 
+		elif (str(bitmap) == '18'): 
 			validate_BM_18(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 19): 
+		elif (str(bitmap) == '19'): 
 			validate_BM_19(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 22): 
+		elif (str(bitmap) == '22'): 
 			validate_BM_22(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 25): 
+		elif (str(bitmap) == '25'): 
 			validate_BM_25(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 32): 
+		elif (str(bitmap) == '32'): 
 			validate_BM_32(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 37): 
+		elif (str(bitmap) == '37'): 
 			validate_BM_37(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 41): 
+		elif (str(bitmap) == '41'): 
 			validate_BM_41(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 42): 
+		elif (str(bitmap) == '42'): 
 			validate_BM_42(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 43): 
+		elif (str(bitmap) == '43'): 
 			validate_BM_43(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 48): 
+		elif (str(bitmap) == '48'): 
 			validate_BM_43(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 49): 
+		elif (str(bitmap) == '49'): 
 			validate_BM_43(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 60): 
+		elif (str(bitmap) == '60'): 
 			validate_BM_43(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 61): 
+		elif (str(bitmap) == '61'): 
 			validate_BM_43(bitmap, bitvalue)
 			return
-		elif (str(bitmap) == 62): 
+		elif (str(bitmap) == '62'): 
 			validate_BM_43(bitmap, bitvalue)
 			return
 	except	InvalidIso8583, exceptionInfo:
         	print exceptionInfo 
+	return
+
+
+def prepare_answer(mti, auth_code, response_code, in_pack, out_pack):
+	out_pack.setMTI(mti)
+	#echoed from request
+	out_pack.setBit(2, pack.getBit(2))
+	out_pack.setBit(3, pack.getBit(3))
+	out_pack.setBit(4, pack.getBit(4))
+	out_pack.setBit(11, pack.getBit(11))
+	out_pack.setBit(12, pack.getBit(12))
+	out_pack.setBit(13, pack.getBit(13))
+	#out_pack.setBit(15, pack.getBit(15))
+	out_pack.setBit(18, pack.getBit(18))
+	out_pack.setBit(19, pack.getBit(19))
+	out_pack.setBit(32, pack.getBit(32))
+	out_pack.setBit(37, pack.getBit(37))
+	
+	#6 alpha numeric characters, fixed lentgh
+	#Conditional  only present if the transaction is approved.  
+	#If issuing bank does not approve the authorization, this field will not be present.
+	out_pack.setBit(38, auth_code); 
+	out_pack.setBit(39, response_code); 
+	out_pack.setBit(49, pack.getBit(49)); 
 	return
 
 from ISO8583.ISO8583 import ISO8583
@@ -498,38 +537,24 @@ while 1:
 					break
 					
 					
+			#consume all exceptions and just log the information, server should not die unless its 
+			#killed explicitly
 			except InvalidIso8583, ii:
 				print ii
-				break
+			#catch all exception(s) here
 			except:
 				print ('Something happened!!!!')
-				break
 			
 			#send answer
 			auth_code = '000000'
 			response_code = '00'
+			mti = '0210'
 			response = ISO8583()
-			response.setMTI('0210')
-			#echoed from request
-			response.setBit(2, pack.getBit(2))
-			response.setBit(3, pack.getBit(3))
-			response.setBit(4, pack.getBit(4))
-			response.setBit(11, pack.getBit(11))
-			response.setBit(12, pack.getBit(12))
-			response.setBit(13, pack.getBit(13))
-			#response.setBit(15, pack.getBit(15))
-			response.setBit(18, pack.getBit(18))
-			response.setBit(19, pack.getBit(19))
-			response.setBit(32, pack.getBit(32))
-			response.setBit(37, pack.getBit(37))
-			
-			#6 alpha numeric characters, fixed lentgh
-			#Conditional  only present if the transaction is approved.  
-			#If issuing bank does not approve the authorization, this field will not be present.
-			response.setBit(38, auth_code); 
-			response.setBit(39, response_code); 
-			response.setBit(49, pack.getBit(49)); 
-			
+			try:
+				prepare_answer(mti, auth_code, response_code, pack, response)
+			except:
+				print ('Something happened!!!!')
+						
 			if bigEndian:
 				ans = response.getNetworkISO()
 			else:
