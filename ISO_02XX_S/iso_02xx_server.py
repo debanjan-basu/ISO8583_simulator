@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #Administer logging
 import logging
+import time
+
 logger = logging.getLogger('myapp')
 hdlr = logging.FileHandler('myapp.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
@@ -96,6 +98,11 @@ def validate_BM_4(bitype, bitvalue):
 	for c in str(bitvalue):
 		if (c.isdigit() == False):
 			raise InvalidIso8583, "Invalid Bitmap_4"
+
+	# to pause the thread for 20 seconds if BM 4 is 000000009999 
+	if (str(bitvalue) == "000000009999") :
+                time.sleep(20)
+                
 	return 
 
 #We do not have to check these bitmap
