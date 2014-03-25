@@ -552,7 +552,10 @@ while 1:
 					bittype = str(v['type'])
 					bitvalue = str(v['value'])
 					#print "The bit " , bitmap
-					validate_ISO8583(bitmap, bittype, bitvalue)
+					if pack.getMTI() == '0200':
+						validate_ISO8583(bitmap, bittype, bitvalue)
+					if pack.getMTI() == '0420': 
+						print ("\tThat's great !!! The client send 0420 !!!")
 
 				if pack.getMTI() == '0200':
 					print ("\tThat's great !!! The client send a correct message !!!")
