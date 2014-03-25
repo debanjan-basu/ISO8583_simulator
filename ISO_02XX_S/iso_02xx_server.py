@@ -481,6 +481,7 @@ def prepare_answer(mti, auth_code, response_code, in_pack, out_pack):
 	out_pack.setBit(2, pack.getBit(2))
 	out_pack.setBit(3, pack.getBit(3))
 	out_pack.setBit(4, pack.getBit(4))
+	out_pack.setBit(7, pack.getBit(7))
 	out_pack.setBit(11, pack.getBit(11))
 	out_pack.setBit(12, pack.getBit(12))
 	out_pack.setBit(13, pack.getBit(13))
@@ -555,6 +556,8 @@ while 1:
 
 				if pack.getMTI() == '0200':
 					print ("\tThat's great !!! The client send a correct message !!!")
+				if pack.getMTI() == '0420':
+					print ("\tThat's great !!! The client send a correct message !!!")
 				else:
 					auth_code = '000003'
 					response_code = '02'
@@ -575,8 +578,12 @@ while 1:
 				response_code = '02'
 				print ('Something happened!!!!')
 			
-			mti = '0210'
 			response = ISO8583()
+
+			if pack.getMTI() == '0420':
+				mti = '0430'
+			if pack.getMTI() == '0200':
+				mti = '0210'
 			try:
 				prepare_answer(mti, auth_code, response_code, pack, response)
 			except:
