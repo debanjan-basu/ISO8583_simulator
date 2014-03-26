@@ -100,8 +100,8 @@ def validate_BM_4(bitype, bitvalue):
 			raise InvalidIso8583, "Invalid Bitmap_4"
 
 	# to pause the thread for 20 seconds if BM 4 is 000000009999 
-	if (str(bitvalue) == "000000009999") :
-                time.sleep(20)
+	if pack.getBit(4) == '000000001000':
+		time.sleep(20)	
                 
 	return 
 
@@ -481,6 +481,9 @@ def prepare_answer(mti, auth_code, response_code, in_pack, out_pack):
 	out_pack.setBit(2, pack.getBit(2))
 	out_pack.setBit(3, pack.getBit(3))
 	out_pack.setBit(4, pack.getBit(4))
+
+	
+
 	out_pack.setBit(7, pack.getBit(7))
 	out_pack.setBit(11, pack.getBit(11))
 	out_pack.setBit(12, pack.getBit(12))
@@ -554,14 +557,12 @@ while 1:
 					#print "The bit " , bitmap
 					if pack.getMTI() == '0200':
 						validate_ISO8583(bitmap, bittype, bitvalue)
-					if pack.getMTI() == '0420': 
-						print ("\tThat's great !!! The client send 0420 !!!")
 
 				if pack.getMTI() == '0200':
 					print ("\tThat's great !!! The client send a correct message !!!")
-				if pack.getMTI() == '0420':
+				elif pack.getMTI() == '0420':
 					print ("\tThat's great !!! The client send a correct message !!!")
-				else:
+				elif pack.getMTI() == '0100':
 					auth_code = '000003'
 					response_code = '02'
 					print ("The client dosen't send the correct message!")	
