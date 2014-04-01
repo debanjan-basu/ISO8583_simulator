@@ -232,7 +232,16 @@ def validate_BM_22(bitype, bitvalue):
 	return
 
 def validate_BM_23(bitype, bitvalue):
+	#check length
+        if (len(str(bitvalue)) != 3):
+                raise InvalidIso8583, "Invalid Bitmap_23"
+
+        # should be numeric
+        for c in str(bitvalue):
+                if (c.isdigit() == False):
+                        raise InvalidIso8583, "Invalid Bitmap_23"
 	return
+
 def validate_BM_24(bitype, bitvalue):
 	return
 
@@ -293,8 +302,20 @@ def validate_BM_37(bitype, bitvalue):
 	return
 
 def validate_BM_38(bitype, bitvalue):
+	if (len(str(bitvalue)) != 6):
+		raise InvalidIso8583, "Invalid Bitmap_38"
+	# should be alpha-numeric
+        for c in str(bitvalue):
+                if (c.isalnum() == False):
+                        raise InvalidIso8583, "Invalid Bitmap_38"
 	return
 def validate_BM_39(bitype, bitvalue):
+	if (len(str(bitvalue)) != 2):
+		raise InvalidIso8583, "Invalid Bitmap_39"
+	# should be alpha-numeric
+        for c in str(bitvalue):
+                if (c.isalnum() == False):
+                        raise InvalidIso8583, "Invalid Bitmap_39"
 	return
 def validate_BM_40(bitype, bitvalue):
 	return
@@ -387,6 +408,8 @@ def validate_BM_61(bitype, bitvalue):
 def validate_BM_62(bitype, bitvalue):
 	return
 def validate_BM_63(bitype, bitvalue):
+	if (str(bitvalue) != "068"):
+		raise InvalidIso8583, "Invalid Bitmap_63"
 	return
 def validate_BM_64(bitype, bitvalue):
 	return
@@ -400,8 +423,30 @@ def validate_BM_68(bitype, bitvalue):
 	return
 def validate_BM_69(bitype, bitvalue):
 	return
+def validate_BM_90(bitype, bitvalue):
+	#check length
+        if (len(str(bitvalue)) <= 0 or len(str(bitvalue)) > 42):
+                raise InvalidIso8583, "Invalid Bitmap_90"
 
-def validate_ISO8583 (bitmap, bitype, bitvalue):
+        # should be numeric
+        for c in str(bitvalue):
+                if (c.isdigit() == False):
+                        raise InvalidIso8583, "Invalid Bitmap_90"
+	return
+
+def validate_BM_95(bitype, bitvalue):
+	#check length
+        if (len(str(bitvalue)) <= 0 or len(str(bitvalue)) > 12):
+                raise InvalidIso8583, "Invalid Bitmap_95"
+
+        # should be numeric
+        for c in str(bitvalue):
+                if (c.isdigit() == False):
+                        raise InvalidIso8583, "Invalid Bitmap_95"
+	return
+
+
+def validate_ISO8583_0200 (bitmap, bitype, bitvalue):
 	print "The bitmap is ", str(bitmap)
 	print "The bit-type is ", str(bitype)
 	print "The bitvalue is ", str(bitvalue)
@@ -471,6 +516,94 @@ def validate_ISO8583 (bitmap, bitype, bitvalue):
 		return
 	elif (str(bitmap) == '62'): 
 		validate_BM_62(bitmap, bitvalue)
+		return
+	return
+
+def validate_ISO8583_0400 (bitmap, bitype, bitvalue):
+	print "The bitmap is ", str(bitmap)
+	print "The bit-type is ", str(bitype)
+	print "The bitvalue is ", str(bitvalue)
+
+	if (str(bitmap) == '2'): 
+		validate_BM_2(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '3'): 
+		validate_BM_3(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '4'): 
+		validate_BM_4(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '7'): 
+		validate_BM_7(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '11'): 
+		validate_BM_11(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '12'): 
+		validate_BM_12(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '13'): 
+		validate_BM_13(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '14'): 
+		validate_BM_14(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '18'): 
+		validate_BM_18(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '19'): 
+		validate_BM_19(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '22'): 
+		validate_BM_22(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '23'): 
+		validate_BM_23(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '25'): 
+		validate_BM_25(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '32'): 
+		validate_BM_32(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '37'): 
+		validate_BM_37(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '38'): 
+		validate_BM_38(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '39'): 
+		validate_BM_39(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '41'): 
+		validate_BM_41(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '42'): 
+		validate_BM_42(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '43'): 
+		validate_BM_43(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '49'): 
+		validate_BM_49(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '60'): 
+		validate_BM_60(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '61'): 
+		validate_BM_61(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '62'): 
+		validate_BM_62(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '63'): 
+		validate_BM_63(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '90'): 
+		validate_BM_90(bitmap, bitvalue)
+		return
+	elif (str(bitmap) == '95'): 
+		validate_BM_95(bitmap, bitvalue)
 		return
 	return
 
@@ -556,7 +689,9 @@ while 1:
 					bitvalue = str(v['value'])
 					#print "The bit " , bitmap
 					if pack.getMTI() == '0200':
-						validate_ISO8583(bitmap, bittype, bitvalue)
+						validate_ISO8583_0200(bitmap, bittype, bitvalue)
+					elif pack.getMTI() == '0400':
+						validate_ISO8583_0400(bitmap, bittype, bitvalue)
 
 				if pack.getMTI() == '0200':
 					print ("\tThat's great !!! The client send a correct message !!!")
